@@ -23,8 +23,24 @@ public class User implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-    @Column
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "contactNumber")
+    private String contactNumber;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "role")
+    private String role;
+
 
 
 }
