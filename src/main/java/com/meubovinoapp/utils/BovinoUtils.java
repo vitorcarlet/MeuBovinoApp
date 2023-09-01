@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 
 public class BovinoUtils {
 
+    //Classe sem instância
     private BovinoUtils(){
 
     }
