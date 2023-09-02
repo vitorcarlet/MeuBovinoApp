@@ -1,13 +1,13 @@
 package com.meubovinoapp.utils;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.util.List;
 
 @Service
@@ -36,7 +36,7 @@ public class EmailUtils {
         return cc;
     }
 
-    public void forgotMail(String to, String subject, String password) throws MessagingException {
+    public void forgotMail(String to, String subject, String password) throws MessagingException, MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setFrom("amithumarx31@gmail.com");

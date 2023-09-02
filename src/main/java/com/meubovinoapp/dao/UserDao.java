@@ -2,11 +2,11 @@ package com.meubovinoapp.dao;
 
 import com.meubovinoapp.POJO.User;
 import com.meubovinoapp.wrapper.UserWrapper;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface UserDao extends JpaRepository<User, Integer> {
