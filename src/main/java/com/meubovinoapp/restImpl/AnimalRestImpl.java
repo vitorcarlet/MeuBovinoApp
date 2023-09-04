@@ -1,11 +1,12 @@
 package com.meubovinoapp.restImpl;
 
+import com.meubovinoapp.POJO.Animal;
 import com.meubovinoapp.constants.BovinoConstants;
 import com.meubovinoapp.rest.AnimalRest;
-import com.meubovinoapp.rest.UserRest;
+import com.meubovinoapp.service.AnimalService;
 import com.meubovinoapp.service.UserService;
 import com.meubovinoapp.utils.BovinoUtils;
-import com.meubovinoapp.wrapper.UserWrapper;
+import com.meubovinoapp.wrapper.AnimalWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,12 @@ import java.util.Map;
 public class AnimalRestImpl implements AnimalRest {
 
     @Autowired
-    UserService userService;
+    AnimalService animalService;
 
     @Override
     public ResponseEntity<String> addAnimal(Map<String, String> requestMap) {
         try{
-            return userService.signUp(requestMap);
+            return animalService.addAnimal(requestMap);
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -33,19 +34,29 @@ public class AnimalRestImpl implements AnimalRest {
 
 
     @Override
-    public ResponseEntity<List<UserWrapper>> getAllAnimals() {
+    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
         try{
-            return userService.getAllUser();
+            return animalService.getAllAnimals();
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return new ResponseEntity<List<UserWrapper>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<List<AnimalWrapper>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Animal> findById(Integer id) {
+        try{
+            return animalService.findAnimalById(id);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return new ResponseEntity<>(new Animal(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
     public ResponseEntity<String> updateAnimal(Map<String, String> requestMap) {
         try{
-            return userService.update(requestMap);
+            return animalService.updateAnimal(requestMap);
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -53,13 +64,13 @@ public class AnimalRestImpl implements AnimalRest {
     }
 
     @Override
-    public ResponseEntity<String> checkToken() {
-        try{
-            return userService.checkToken();
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<String> addNewWeight(Map<String, String> requestMap) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<String> removeNewWeight(Map<String, String> requestMap) {
+        return null;
     }
 
 

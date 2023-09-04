@@ -7,12 +7,11 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 
-@NamedQuery(name = "Animal.getAllOx", query = "select new com.example.demo.wrapper.UserWrapper(u.id,u.name, u.email,u.contactNumber,u.status) from Animal u where u.role='user'")
-@NamedQuery(name = "Animal.findById", query = "select new com.example.demo.wrapper.UserWrapper(u.id,u.name, u.email,u.contactNumber,u.status) from Animal u where u.role='user'")
+@NamedQuery(name = "Animal.getAllAnimal", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.ownerId=:ownerId")
+@NamedQuery(name = "Animal.findById", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.id=:id")
+@NamedQuery(name = "Animal.findAnimalByName", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.name=:name")
 
 
 
@@ -20,7 +19,7 @@ import java.util.List;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name = "animal")
+@Table(name = "animals")
 public class Animal implements Serializable {
 
     @Serial
@@ -38,19 +37,24 @@ public class Animal implements Serializable {
     private String race;
 
     @Column(name = "birth")
-    private Date birth;
+    private String birth;
 
-    @Column(name = "picture")
-    private Byte[] picture;
+//    @Column(name = "picture")
+//    private byte[] picture;
 
     @Column(name = "actualWeight")
     private Integer actualWeight;
 
-    @Column(name = "evolutionHistoric")
-    private List<Evolution> evolutionHistoric;
+//    @Column(name = "evolutionHistoric")
+//    private Evolution evolutionHistoric;
 
-    @OneToOne()
-    @JoinColumn(name = "ownerId_fk", nullable = false)
-    private User ownerId ;
+    //private String role;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "oxId_fk", nullable = false)
+    private User ownerId;
+
+    public void setBirth(String birth) {
+        this.birth = birth;
+    }
 }

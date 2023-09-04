@@ -1,11 +1,9 @@
 package com.meubovinoapp.rest;
 
-import com.meubovinoapp.wrapper.UserWrapper;
+import com.meubovinoapp.POJO.Animal;
+import com.meubovinoapp.wrapper.AnimalWrapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,10 @@ public interface AnimalRest {
     public ResponseEntity<String> addAnimal(@RequestBody(required = true) Map<String, String> requestMap);
 
     @GetMapping(path = "/get")
-    public ResponseEntity<List<UserWrapper>> getAllAnimals();
+    public ResponseEntity<List<AnimalWrapper>> getAllAnimals();
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Animal> findById(@PathVariable Integer id);
 
     @PostMapping(path = "/update")
     public ResponseEntity<String> updateAnimal(@RequestBody(required = true) Map<String, String> requestMap);
@@ -28,9 +29,5 @@ public interface AnimalRest {
     @PostMapping(path = "/removeNewWeight")
     public ResponseEntity<String> removeNewWeight(@RequestBody(required = true) Map<String, String> requestMap);
 
-
-
-    @GetMapping(path = "/checkToken")
-    ResponseEntity<String> checkToken();
 
 }

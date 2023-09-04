@@ -10,26 +10,27 @@ import com.meubovinoapp.dao.AnimalDAO;
 import com.meubovinoapp.dao.UserDao;
 import com.meubovinoapp.service.AnimalService;
 import com.meubovinoapp.utils.BovinoUtils;
-import com.meubovinoapp.wrapper.UserWrapper;
+import com.meubovinoapp.wrapper.AnimalWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+@Slf4j
 public class AnimalServiceImpl implements AnimalService {
 
     @Autowired
-    private AnimalDAO animalDAO;
+    AnimalDAO animalDAO;
+
 
     @Autowired
     UserDao userDao;
+
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -40,51 +41,115 @@ public class AnimalServiceImpl implements AnimalService {
     @Autowired
     JwtUtil jwtUtil;
 
+
     @Autowired
     JwtFilter jwtFilter;
 
-    public void addAnimal(Map<String,String> requestMap){
+    public ResponseEntity<String> addAnimal(Map<String, String> requestMap) {
+        log.info("Inside addAnimal {}", requestMap);
+        try {
+            log.info("Inside is User {}", requestMap);
+            if (validateAddAnimal(requestMap)) {
+                Animal animal = animalDAO.findAnimalByName(requestMap.get("name"));
+                if (Objects.isNull(animal)) {
+                    if (jwtFilter.isUser() || jwtFilter.isAdmin()) {
+                        if (validateAddAnimal(requestMap)) {
+                            animal = getAnimalFromMap(requestMap, false);
+                            animalDAO.save(animal);
+                            log.info("Inside Success  {}", requestMap);
+                            return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
+                        }
+                    }else{
+                        return BovinoUtils.getResponseEntity("Unauthorized access.", HttpStatus.UNAUTHORIZED);
+                    }
+
+                } else {
+                    return BovinoUtils.getResponseEntity("This animal already exists.", HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 
-    public void RemoveAnimal(Map<String,String> requestMap){
-
+    public ResponseEntity<String> removeAnimal(Map<String, String> requestMap) {
+        try {
+            Animal animal = animalDAO.findAnimalByName(requestMap.get("name"));
+            if (Objects.isNull(animal)) {
+                return BovinoUtils.getResponseEntity("Animal not found.", HttpStatus.BAD_REQUEST);
+            }
+            animalDAO.delete(animal);
+            return BovinoUtils.getResponseEntity("Animal removed successfully.", HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public void addNewWeight(Map<String,String> requestMap) {
-        Animal animal = animalDAO.findById(Integer.valueOf(requestMap.get("animal"))).get();
-        animal.setActualWeight(4);
-        animalDAO.save(animal);
+    public ResponseEntity<String> addNewWeight(Map<String, String> requestMap) {
+        try {
+            if (validatedNewWeight(requestMap)) {
+                Animal animal = animalDAO.findAnimalById(Integer.valueOf(requestMap.get("id")));
+                if (Objects.isNull(animal)) {
+                    animal.setActualWeight(Integer.valueOf(requestMap.get("weight")));
+                    animalDAO.save(animal);
+                } else {
+                    return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private boolean validateAddAnimal(Map<String, String> requestMap) {
-        if (requestMap.containsKey("name") && requestMap.containsKey("contactNumber")
-                && requestMap.containsKey("email")
-                && requestMap.containsKey("password")) {
+    private boolean validatedNewWeight(Map<String, String> requestMap) {
+        if (requestMap.containsKey("id") && requestMap.containsKey("weight")
+        ) {
             return true;
         }
         return false;
     }
 
-    private User getAnimalFromMap(Map<String, String> requestMap) {
+    private boolean validateAddAnimal(Map<String, String> requestMap) {
+        if (requestMap.containsKey("name") && requestMap.containsKey("race")
+                && requestMap.containsKey("birth")
+                && requestMap.containsKey("actualWeight")
+                && requestMap.containsKey(("ownerId"))) {
+            return true;
+        }
+        return false;
+    }
+
+    private Animal getAnimalFromMap(Map<String, String> requestMap, boolean isAdd) {
+
+        Animal animal = new Animal();
+
         User user = new User();
-        user.setName(requestMap.get("name"));
-        user.setContactNumber(requestMap.get("contactNumber"));
-        user.setEmail(requestMap.get("email"));
-        user.setPassword(requestMap.get("password"));
-        user.setStatus("false");
-        user.setRole("user");
-        return user;
+        user.setId(Integer.parseInt(requestMap.get("ownerId")));
+
+
+        if (Objects.isNull(user)) {
+            return animal;
+        }
+        animal.setName(requestMap.get("name"));
+        animal.setRace(requestMap.get("race"));
+        animal.setBirth(requestMap.get("birth"));
+        animal.setActualWeight(Integer.valueOf(requestMap.get("actualWeight")));
+        animal.setOwnerId(user);
+        return animal;
+
     }
 
 
-    public ResponseEntity<List<UserWrapper>> getAllAnimal() {
+    public ResponseEntity<List<AnimalWrapper>> getAllAnimal() {
         try {
-            if (jwtFilter.isAdmin()) {
-                return new ResponseEntity<>(userDao.getAllUser(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
-            }
+            return new ResponseEntity<>(animalDAO.getAllAnimal(), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -94,14 +159,12 @@ public class AnimalServiceImpl implements AnimalService {
 
     public ResponseEntity<String> updateAnimal(Map<String, String> requestMap) {
         try {
-            if (jwtFilter.isAdmin()) {
-                Optional<User> optional = userDao.findById(Integer.parseInt(requestMap.get("id")));
-                if (!optional.isEmpty()) {
-                    userDao.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
-                    //sendMailToAllAdmin(requestMap.get("status"), optional.get().getEmail(), userDao.getAllAdmin());
-                    return BovinoUtils.getResponseEntity("User Status Updated Successfully", HttpStatus.OK);
-                } else {
-                    BovinoUtils.getResponseEntity("User id doesnt exist", HttpStatus.OK);
+
+            Optional<Animal> optional = Optional.ofNullable(animalDAO.findAnimalById(Integer.parseInt(requestMap.get("id"))));
+            if (!optional.isEmpty()) {
+                if (validateAddAnimal(requestMap)) {
+                    animalDAO.save(getAnimalFromMap(requestMap, false));
+                    return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
                 }
             } else {
                 return BovinoUtils.getResponseEntity(BovinoConstants.UNAUTHORIZED_ACCESS, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -111,5 +174,31 @@ public class AnimalServiceImpl implements AnimalService {
         }
         return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    public ResponseEntity<Animal> findAnimalById(Integer id) {
+        try {
+            Animal animal = animalDAO.findById(id).get();
+            if (Objects.isNull(animal)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            return new ResponseEntity<>(animalDAO.getById(id), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+    }
+
+    @Override
+    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
+        try {
+            return (ResponseEntity<List<AnimalWrapper>>) animalDAO.getAllAnimal();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return new ResponseEntity<List<AnimalWrapper>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
 }

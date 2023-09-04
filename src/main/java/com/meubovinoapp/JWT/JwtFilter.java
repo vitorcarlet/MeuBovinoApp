@@ -1,10 +1,6 @@
 package com.meubovinoapp.JWT;
 
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +9,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
@@ -26,6 +26,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     Claims claims = null;
     private String userName = null;
+
+    private String userId = null;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -42,9 +44,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 claims = jwtUtil.extractAllClaims(token);
             }
 
-            if (userName != null && SecurityContextHolder.getContext().getAuthentication()==null){
+            if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = service.loadUserByUsername(userName);
-                if(jwtUtil.validateToken(token,userDetails)){
+                if (jwtUtil.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(
@@ -57,20 +59,28 @@ public class JwtFilter extends OncePerRequestFilter {
         }
     }
 
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return "admin".equalsIgnoreCase((String) claims.get("role"));
     }
 
-    public boolean isUser(){
+    public boolean isUser() {
         return "user".equalsIgnoreCase((String) claims.get("role"));
     }
 
-    public String getCurrentUser(){
+    public String getCurrentUser() {
         return userName;
+    }
+
+    public String getCurrentIdUser() {
+        if (userId == null) {
+            userId = (String) claims.get("id");
+        }
+        return userId;
     }
 
     @Override
     public void destroy() {
         // Liberação de recursos do filtro (opcional)
     }
+
 }

@@ -9,7 +9,6 @@ import com.meubovinoapp.constants.BovinoConstants;
 import com.meubovinoapp.dao.UserDao;
 import com.meubovinoapp.service.UserService;
 import com.meubovinoapp.utils.BovinoUtils;
-import com.meubovinoapp.utils.EmailUtils;
 import com.meubovinoapp.wrapper.UserWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +40,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     JwtFilter jwtFilter;
 
-    @Autowired
-    EmailUtils emailUtils;
+
 
     @Override
     public ResponseEntity<String> signUp(Map<String, String> requestMap) {
@@ -146,14 +144,14 @@ public class UserServiceImpl implements UserService {
         return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
-        allAdmin.remove(jwtFilter.getCurrentUser());
-        if (status != null && status.equalsIgnoreCase("true")) {
-            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUser(), "Account Approved", "USER:- " + user + " \n is approved by \nADMIN:-" + jwtFilter.getCurrentUser(), allAdmin);
-        } else {
-            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUser(), "Account Disabled", "USER:- " + user + " \n is disabled by \nADMIN:-" + jwtFilter.getCurrentUser(), allAdmin);
-        }
-    }
+//    private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
+//        allAdmin.remove(jwtFilter.getCurrentUser());
+//        if (status != null && status.equalsIgnoreCase("true")) {
+//            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUser(), "Account Approved", "USER:- " + user + " \n is approved by \nADMIN:-" + jwtFilter.getCurrentUser(), allAdmin);
+//        } else {
+//            emailUtils.sendSimpleMessage(jwtFilter.getCurrentUser(), "Account Disabled", "USER:- " + user + " \n is disabled by \nADMIN:-" + jwtFilter.getCurrentUser(), allAdmin);
+//        }
+//    }
 
     @Override
     public ResponseEntity<String> checkToken() {
@@ -184,7 +182,6 @@ public class UserServiceImpl implements UserService {
         try{
             User user = userDao.findByEmail(requestMap.get("email"));
             if(!Objects.isNull(user) && !Strings.isNullOrEmpty(user.getEmail())){
-                emailUtils.forgotMail(user.getEmail(),"Credentials by Cafe Management System", user.getPassword());
                 return BovinoUtils.getResponseEntity("Check your mail for Credentials.",HttpStatus.OK);
             }
 
