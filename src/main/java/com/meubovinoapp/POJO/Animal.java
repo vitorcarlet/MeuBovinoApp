@@ -1,6 +1,9 @@
 package com.meubovinoapp.POJO;
 
+import com.meubovinoapp.wrapper.AnimalWrapper;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -9,9 +12,11 @@ import java.io.Serial;
 import java.io.Serializable;
 
 
-@NamedQuery(name = "Animal.getAllAnimal", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.ownerId=:ownerId")
-@NamedQuery(name = "Animal.findById", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.id=:id")
-@NamedQuery(name = "Animal.findAnimalByName", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.name=:name")
+@NamedQuery(name = "Animal.getAllAnimal", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight,u.ownerId) from Animal u where u.ownerId.id = :ownerId")
+@NamedQuery(name = "Animal.getAllAnimalsByOwnerId", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight,u.ownerId) from Animal u where u.ownerId.id = :ownerId")
+@NamedQuery(name = "Animal.findById", query = "select new com.meubovinoapp.POJO.Animal(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.id=:id")
+@NamedQuery(name = "Animal.findAnimalByName", query = "select new com.meubovinoapp.POJO.Animal(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.name=:name and u.ownerId.id = :ownerId")
+@NamedQuery(name = "Animal.findAnimalById", query = "select new com.meubovinoapp.POJO.Animal(u.id,u.name, u.race,u.birth,u.actualWeight,u.ownerId) from Animal u where u.id=:id")
 
 
 
@@ -20,6 +25,8 @@ import java.io.Serializable;
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "animals")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Animal implements Serializable {
 
     @Serial
@@ -56,5 +63,14 @@ public class Animal implements Serializable {
 
     public void setBirth(String birth) {
         this.birth = birth;
+
+    }
+
+    public Animal(Integer id, String name, String race, String birth, Integer actualWeight) {
+        this.id = id;
+        this.name = name;
+        this.race = race;
+        this.birth = birth;
+        this.actualWeight = actualWeight;
     }
 }

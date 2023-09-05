@@ -13,6 +13,7 @@ import com.meubovinoapp.utils.BovinoUtils;
 import com.meubovinoapp.wrapper.AnimalWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,21 +46,23 @@ public class AnimalServiceImpl implements AnimalService {
     @Autowired
     JwtFilter jwtFilter;
 
+
+    @Autowired
+    private ConversionService conversionService;
+
     public ResponseEntity<String> addAnimal(Map<String, String> requestMap) {
         log.info("Inside addAnimal {}", requestMap);
         try {
             log.info("Inside is User {}", requestMap);
             if (validateAddAnimal(requestMap)) {
-                Animal animal = animalDAO.findAnimalByName(requestMap.get("name"));
+                Animal animal = animalDAO.findAnimalByName(requestMap.get("name"), Integer.valueOf(requestMap.get("ownerId")));
                 if (Objects.isNull(animal)) {
                     if (jwtFilter.isUser() || jwtFilter.isAdmin()) {
-                        if (validateAddAnimal(requestMap)) {
-                            animal = getAnimalFromMap(requestMap, false);
-                            animalDAO.save(animal);
-                            log.info("Inside Success  {}", requestMap);
-                            return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
-                        }
-                    }else{
+                        animal = getAnimalFromMap(requestMap, false);
+                        animalDAO.save(animal);
+                        log.info("Inside Success  {}", requestMap);
+                        return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
+                    } else {
                         return BovinoUtils.getResponseEntity("Unauthorized access.", HttpStatus.UNAUTHORIZED);
                     }
 
@@ -79,7 +82,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     public ResponseEntity<String> removeAnimal(Map<String, String> requestMap) {
         try {
-            Animal animal = animalDAO.findAnimalByName(requestMap.get("name"));
+            Animal animal = animalDAO.findAnimalByName(requestMap.get("name"), Integer.valueOf(requestMap.get("ownerId")));
             if (Objects.isNull(animal)) {
                 return BovinoUtils.getResponseEntity("Animal not found.", HttpStatus.BAD_REQUEST);
             }
@@ -107,6 +110,122 @@ public class AnimalServiceImpl implements AnimalService {
         }
         return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    public ResponseEntity<String> updateAnimal(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isAdmin()) {
+                if (validateUpdateAnimal(requestMap)) {
+                    int animalId = Integer.parseInt(requestMap.get("id"));
+                    Optional<Animal> optional = Optional.ofNullable(animalDAO.findAnimalById(Integer.parseInt(requestMap.get("id"))));
+                    if (!optional.isEmpty()) {
+                        Animal existingAnimal = optional.get();
+                        Animal updatedAnimal = getAnimalFromMap(requestMap, false);
+                        updatedAnimal.setId(animalId);
+                        animalDAO.save(updatedAnimal);
+                        return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
+                    } else {
+                        return BovinoUtils.getResponseEntity(BovinoConstants.UNAUTHORIZED_ACCESS, HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                } else {
+                    return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return BovinoUtils.getResponseEntity(BovinoConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> deleteProduct(Map<String, String> requestMap) {
+        try {
+            if (jwtFilter.isAdmin()) {
+                 Integer id = Integer.valueOf(requestMap.get("id"));
+                Optional optional = animalDAO.findById(id);
+                if (!optional.isEmpty()) {
+                    animalDAO.deleteById(id);
+                    return BovinoUtils.getResponseEntity("Animal Deleted Succesfully", HttpStatus.OK);
+                }
+                return BovinoUtils.getResponseEntity("Animal id does not exist.", HttpStatus.OK);
+            } else {
+                return BovinoUtils.getResponseEntity(BovinoConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    private boolean validateUpdateAnimal(Map<String, String> requestMap) {
+        if (
+                requestMap.containsKey("id")
+                        && requestMap.containsKey("name")
+                        && requestMap.containsKey("race")
+                        && requestMap.containsKey("birth")
+                        && requestMap.containsKey("actualWeight")
+                        && requestMap.containsKey(("ownerId"))) {
+            return true;
+        }
+        return false;
+    }
+
+    public ResponseEntity<Animal> findAnimalById(Integer id) {
+        try {
+            Animal animal = animalDAO.findById(id).get();
+            if (Objects.isNull(animal)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            return new ResponseEntity<>(animalDAO.getById(id), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+    }
+
+
+//    @Override
+//    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
+//        User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
+//
+//        if (Objects.isNull(userObj)){
+//            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//
+//        List<Animal> animals = animalDAO.getAllAnimalsByOwnerId(userObj.getId());
+//        List<AnimalWrapper> animalWrappers = new ArrayList<>();
+//
+//        for (Animal animal : animals) {
+//            AnimalWrapper animalWrapper = new AnimalWrapper(animal.getId(), animal.getName(), animal.getRace(), animal.getBirth(), animal.getActualWeight(), animal.getOwnerId());
+//            animalWrappers.add(animalWrapper);
+//        }
+//
+//        return new ResponseEntity<>(animalWrappers, HttpStatus.OK);
+//    }
+
+
+    @Override
+    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
+
+        User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
+        if (Objects.isNull(userObj)) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        List<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId(userObj.getId());
+        List<AnimalWrapper> animalWrappers = new ArrayList<>();
+        for (AnimalWrapper animal : animals) {
+            AnimalWrapper animalWrapper = new AnimalWrapper(animal.getId(), animal.getName(), animal.getRace(), animal.getBirth(), animal.getActualWeight(),
+                    (animal.getOwnerId() != null) ? animal.getOwnerId().getId() : null
+            );
+            animalWrappers.add(animalWrapper);
+        }
+        return new ResponseEntity<>(animalWrappers, HttpStatus.OK);
+    }
+
 
     private boolean validatedNewWeight(Map<String, String> requestMap) {
         if (requestMap.containsKey("id") && requestMap.containsKey("weight")
@@ -144,60 +263,6 @@ public class AnimalServiceImpl implements AnimalService {
         animal.setOwnerId(user);
         return animal;
 
-    }
-
-
-    public ResponseEntity<List<AnimalWrapper>> getAllAnimal() {
-        try {
-            return new ResponseEntity<>(animalDAO.getAllAnimal(), HttpStatus.OK);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-
-    public ResponseEntity<String> updateAnimal(Map<String, String> requestMap) {
-        try {
-
-            Optional<Animal> optional = Optional.ofNullable(animalDAO.findAnimalById(Integer.parseInt(requestMap.get("id"))));
-            if (!optional.isEmpty()) {
-                if (validateAddAnimal(requestMap)) {
-                    animalDAO.save(getAnimalFromMap(requestMap, false));
-                    return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
-                }
-            } else {
-                return BovinoUtils.getResponseEntity(BovinoConstants.UNAUTHORIZED_ACCESS, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    public ResponseEntity<Animal> findAnimalById(Integer id) {
-        try {
-            Animal animal = animalDAO.findById(id).get();
-            if (Objects.isNull(animal)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            return new ResponseEntity<>(animalDAO.getById(id), HttpStatus.OK);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-    }
-
-    @Override
-    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
-        try {
-            return (ResponseEntity<List<AnimalWrapper>>) animalDAO.getAllAnimal();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return new ResponseEntity<List<AnimalWrapper>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

@@ -14,5 +14,7 @@ public interface AnimalDAO extends JpaRepository<Animal, Integer> {
 
     List<AnimalWrapper> getAllAnimal();
 
-    Animal findAnimalByName(@Param("name") String name);
+    Animal findAnimalByName(@Param("name") String name,@Param("ownerId") Integer ownerId);
+
+    List<AnimalWrapper> getAllAnimalsByOwnerId(Integer ownerId);
 }

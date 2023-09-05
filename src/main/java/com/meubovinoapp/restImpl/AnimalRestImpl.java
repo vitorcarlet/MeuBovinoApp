@@ -64,6 +64,17 @@ public class AnimalRestImpl implements AnimalRest {
     }
 
     @Override
+    public ResponseEntity<String> deleteAnimal(Map<String, String> requestMap) {
+        try{
+            return animalService.deleteProduct(requestMap);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    @Override
     public ResponseEntity<String> addNewWeight(Map<String, String> requestMap) {
         return null;
     }

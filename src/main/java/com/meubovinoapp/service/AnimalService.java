@@ -13,6 +13,7 @@ public interface AnimalService {
 
     ResponseEntity<List<AnimalWrapper>> getAllAnimals();
 
+
     ResponseEntity<String> addNewWeight(Map<String,String> requestMap);
 
     ResponseEntity<String> addAnimal(Map<String,String> requestMap);
@@ -21,4 +22,6 @@ public interface AnimalService {
 
 
     ResponseEntity<String> updateAnimal(Map<String, String> requestMap);
+
+    ResponseEntity<String> deleteProduct(Map<String, String> requestMap);
 }

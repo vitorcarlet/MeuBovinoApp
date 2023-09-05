@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@RestController
 @RequestMapping(path = "/animal")
 public interface AnimalRest {
 
@@ -22,6 +23,9 @@ public interface AnimalRest {
 
     @PostMapping(path = "/update")
     public ResponseEntity<String> updateAnimal(@RequestBody(required = true) Map<String, String> requestMap);
+
+    @PostMapping(path = "/remove")
+    public ResponseEntity<String> deleteAnimal(@RequestBody(required = true) Map <String, String> requestMap);
 
     @PostMapping(path = "/addNewWeight")
     public ResponseEntity<String> addNewWeight(@RequestBody(required = true) Map<String, String> requestMap);
