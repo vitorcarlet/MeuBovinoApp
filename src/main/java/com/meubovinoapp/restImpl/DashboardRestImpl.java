@@ -16,7 +16,12 @@ public class DashboardRestImpl implements DashboardRest {
     DashboardService dashboardService;
 
     @Override
-    public ResponseEntity<Map<String, Object>> getCount() {
-        return dashboardService.getCount();
+    public ResponseEntity<String> getCount(Integer userId_fk) {
+      return dashboardService.getCount(userId_fk);
+    }
+
+    @Override
+    public ResponseEntity<String> getAverageWeight(Integer userId_fk) {
+        return dashboardService.getAverageWeight(userId_fk);
     }
 }

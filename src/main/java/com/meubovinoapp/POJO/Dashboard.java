@@ -13,6 +13,10 @@ import java.util.List;
 @DynamicUpdate
 @Table(name = "dashboard")
 
+@NamedQuery(name = "DashboardDAO.getCount", query = "SELECT COUNT(a) FROM Animal a WHERE a.ox_id_fk = :userId_fk")
+@NamedQuery(name = "DashboardDAO.getAverageWeight", query = "SELECT AVG(a.actual_weight) FROM Animal a WHERE a.ox_id_fk = :userId_fk")
+
+
 public class Dashboard implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,12 +26,6 @@ public class Dashboard implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @OneToMany(mappedBy = "dashboard")
-    private List<Animal> oxList;
-
-
-    @Column(name = "averageMark")
-    private float averageMark;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId_fk", nullable = false)

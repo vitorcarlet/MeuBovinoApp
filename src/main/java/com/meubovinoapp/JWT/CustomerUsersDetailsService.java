@@ -1,6 +1,6 @@
 package com.meubovinoapp.JWT;
 
-import com.meubovinoapp.dao.UserDao;
+import com.meubovinoapp.dao.UserDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +17,7 @@ import java.util.Objects;
 public class CustomerUsersDetailsService implements UserDetailsService {
 
     @Autowired
-    UserDao userDao;
+    UserDAO userDao;
 
     private com.meubovinoapp.POJO.User userDetail;
 

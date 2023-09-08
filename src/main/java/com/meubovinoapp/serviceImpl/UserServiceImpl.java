@@ -6,7 +6,7 @@ import com.meubovinoapp.JWT.JwtFilter;
 import com.meubovinoapp.JWT.JwtUtil;
 import com.meubovinoapp.POJO.User;
 import com.meubovinoapp.constants.BovinoConstants;
-import com.meubovinoapp.dao.UserDao;
+import com.meubovinoapp.dao.UserDAO;
 import com.meubovinoapp.service.UserService;
 import com.meubovinoapp.utils.BovinoUtils;
 import com.meubovinoapp.wrapper.UserWrapper;
@@ -26,7 +26,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserDao userDao;
+    UserDAO userDao;
 
     @Autowired
     AuthenticationManager authenticationManager;

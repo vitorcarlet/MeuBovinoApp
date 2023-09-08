@@ -7,7 +7,7 @@ import com.meubovinoapp.POJO.Animal;
 import com.meubovinoapp.POJO.User;
 import com.meubovinoapp.constants.BovinoConstants;
 import com.meubovinoapp.dao.AnimalDAO;
-import com.meubovinoapp.dao.UserDao;
+import com.meubovinoapp.dao.UserDAO;
 import com.meubovinoapp.service.AnimalService;
 import com.meubovinoapp.utils.BovinoUtils;
 import com.meubovinoapp.wrapper.AnimalWrapper;
@@ -30,7 +30,7 @@ public class AnimalServiceImpl implements AnimalService {
 
 
     @Autowired
-    UserDao userDao;
+    UserDAO userDao;
 
 
     @Autowired
@@ -186,26 +186,6 @@ public class AnimalServiceImpl implements AnimalService {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
     }
-
-
-//    @Override
-//    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
-//        User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
-//
-//        if (Objects.isNull(userObj)){
-//            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//
-//        List<Animal> animals = animalDAO.getAllAnimalsByOwnerId(userObj.getId());
-//        List<AnimalWrapper> animalWrappers = new ArrayList<>();
-//
-//        for (Animal animal : animals) {
-//            AnimalWrapper animalWrapper = new AnimalWrapper(animal.getId(), animal.getName(), animal.getRace(), animal.getBirth(), animal.getActualWeight(), animal.getOwnerId());
-//            animalWrappers.add(animalWrapper);
-//        }
-//
-//        return new ResponseEntity<>(animalWrappers, HttpStatus.OK);
-//    }
 
 
     @Override
