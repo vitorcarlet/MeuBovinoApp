@@ -13,8 +13,15 @@ import java.util.List;
 @DynamicUpdate
 @Table(name = "dashboard")
 
-@NamedQuery(name = "DashboardDAO.getCount", query = "SELECT COUNT(a) FROM Animal a WHERE a.ox_id_fk = :userId_fk")
-@NamedQuery(name = "DashboardDAO.getAverageWeight", query = "SELECT AVG(a.actual_weight) FROM Animal a WHERE a.ox_id_fk = :userId_fk")
+@NamedQuery(name = "DashboardDAO.countAnimals", query = "SELECT COUNT(a) FROM Animal a WHERE a.ownerId.id =:user_Id_fk")
+@NamedQuery(name = "DashboardDAO.calculateAverageWeight", query = "SELECT AVG(a.actualWeight) FROM Animal a WHERE a.ownerId.id =:user_Id_fk")
+@NamedQuery(name = "DashboardDAO.getAllAnimalsByOwnerId", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.name,u.actualWeight) from Animal u where u.ownerId.id =:ownerId")
+@NamedQuery(name = "Animal.getAllAnimalsByOwnerId2", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.name,u.actualWeight) from Animal u where u.ownerId.id =:ownerId")
+
+
+
+
+
 
 
 public class Dashboard implements Serializable {

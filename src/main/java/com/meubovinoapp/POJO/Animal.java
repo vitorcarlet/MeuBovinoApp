@@ -73,4 +73,9 @@ public class Animal implements Serializable {
         this.birth = birth;
         this.actualWeight = actualWeight;
     }
+
+    public Animal(String name,Integer actualWeight) {
+        this.name = name;
+        this.actualWeight = actualWeight;
+    }
 }

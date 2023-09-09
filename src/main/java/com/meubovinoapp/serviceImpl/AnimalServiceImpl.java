@@ -113,7 +113,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     public ResponseEntity<String> updateAnimal(Map<String, String> requestMap) {
         try {
-            if (jwtFilter.isAdmin()) {
+            if (jwtFilter.isAdmin() || jwtFilter.isUser()) {
                 if (validateUpdateAnimal(requestMap)) {
                     int animalId = Integer.parseInt(requestMap.get("id"));
                     Optional<Animal> optional = Optional.ofNullable(animalDAO.findAnimalById(Integer.parseInt(requestMap.get("id"))));

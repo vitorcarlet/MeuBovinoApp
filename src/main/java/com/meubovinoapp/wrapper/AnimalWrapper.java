@@ -1,6 +1,7 @@
 package com.meubovinoapp.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.meubovinoapp.POJO.Animal;
 import com.meubovinoapp.POJO.User;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AnimalWrapper {
 
 
@@ -56,6 +58,11 @@ public class AnimalWrapper {
         this.birth = birth;
         this.actualWeight = actualWeight;
         this.ownerIdId = ownerId;
+    }
+
+    public AnimalWrapper(String name, int actualWeight) {
+        this.name = name;
+        this.actualWeight = actualWeight;
     }
 
     public static AnimalWrapper fromAnimal(Animal animal) {
