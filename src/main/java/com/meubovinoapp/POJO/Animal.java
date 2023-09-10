@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -57,13 +58,13 @@ public class Animal implements Serializable {
     @Column(name = "actualWeight")
     private Integer actualWeight;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "evolutionHistoric")
     private Evolution evolutionHistoric;
 
     //private String role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "oxId_fk", nullable = false)
     private User ownerId;
 
@@ -98,5 +99,6 @@ public class Animal implements Serializable {
         this.birth = dateFormat.parse(birth);
     }
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    @Transient
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 }

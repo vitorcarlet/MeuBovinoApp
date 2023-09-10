@@ -12,9 +12,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-@NamedQuery(name = "EvolutionDAO.findAllDates", query = "SELECT e.registryDate, e.weight, e.animalId FROM Evolution e WHERE e.animalId.id =:animalId")
+@NamedQuery(name = "Evolution.findAllDates", query = "SELECT new com.meubovinoapp.wrapper.EvolutionWrapper(e.registryDate, e.weight, e.animalId)  FROM Evolution e WHERE e.animalId.id =:animalId")
 
-@NamedQuery(name = "EvolutionDAO.findByAnimalId", query = "SELECT e.id, e.registryDate, e.weight FROM Evolution e WHERE e.animalId.id =:animalId")
+@NamedQuery(name = "Evolution.findByAnimalId", query = "SELECT e.id, e.registryDate, e.weight FROM Evolution e WHERE e.animalId.id =:animalId")
 
 
 @Data
@@ -24,6 +24,7 @@ import java.util.Date;
 @Table(name = "evolution")
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Evolution implements Serializable {
 
     @Serial
@@ -40,7 +41,7 @@ public class Evolution implements Serializable {
     @Column(name = "weight")
     private int weight;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "animalId_fk", nullable = false)
     private Animal animalId;
 

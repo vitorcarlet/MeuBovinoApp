@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -58,10 +59,9 @@ public class AnimalServiceImpl implements AnimalService {
     @Autowired
     EvolutionService evolutionService;
 
-    @Autowired
     Date dataTempo;
 
-    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 
 
     @Autowired
@@ -76,13 +76,21 @@ public class AnimalServiceImpl implements AnimalService {
                 if (Objects.isNull(animal)) {
                     if (jwtFilter.isUser() || jwtFilter.isAdmin()) {
                         animal = getAnimalFromMap(requestMap, false);
+
+
+                        animalDAO.save(animal);
+
                         Evolution evolution = new Evolution();
-                        evolution.setAnimalId(animal);
                         evolution.setWeight(animal.getActualWeight());
                         evolution.setRegistryDate(animal.getBirth());
+                        evolution.setAnimalId(animal);
+
                         evolutionDAO.save(evolution);
+
+
                         animal.setEvolutionHistoric(evolution);
                         animalDAO.save(animal);
+
                         log.info("Inside Success  {}", requestMap);
                         return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
                     } else {
@@ -103,6 +111,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     }
 
+    //fazer um delete da evolução do animal
     public ResponseEntity<String> removeAnimal(Map<String, String> requestMap) {
         try {
             Animal animal = animalDAO.findAnimalByName(requestMap.get("name"), Integer.valueOf(requestMap.get("ownerId")));

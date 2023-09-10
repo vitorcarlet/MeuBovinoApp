@@ -2,6 +2,7 @@ package com.meubovinoapp.rest;
 
 
 import com.meubovinoapp.POJO.Evolution;
+import com.meubovinoapp.wrapper.EvolutionWrapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequestMapping(path= "/evolution")
 public interface EvolutionRest {
 
-    @GetMapping(path="/get")
-    ResponseEntity<List<Evolution>> getAllDates(@PathVariable Integer animalId);
+    @GetMapping(path="/get/{animalName}")
+    ResponseEntity<List<EvolutionWrapper>> getAllDates(@PathVariable String animalName);
 
 }

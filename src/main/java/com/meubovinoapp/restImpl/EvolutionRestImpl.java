@@ -3,6 +3,7 @@ package com.meubovinoapp.restImpl;
 import com.meubovinoapp.POJO.Evolution;
 import com.meubovinoapp.rest.EvolutionRest;
 import com.meubovinoapp.service.EvolutionService;
+import com.meubovinoapp.wrapper.EvolutionWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,13 @@ public class EvolutionRestImpl implements EvolutionRest {
 
 
     @Override
-    public ResponseEntity<List<Evolution>> getAllDates(Integer animalId) {
+    public ResponseEntity<List<EvolutionWrapper>> getAllDates(String animalName) {
         try{
-            evolutionService.getAllDates(animalId);
+            // try sem return não da warning
+            return evolutionService.getAllDates(animalName);
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return new ResponseEntity<List<Evolution>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<List<EvolutionWrapper>>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
 }
