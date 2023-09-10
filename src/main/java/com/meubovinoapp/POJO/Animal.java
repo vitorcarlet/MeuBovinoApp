@@ -10,6 +10,10 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 
 
 @NamedQuery(name = "Animal.getAllAnimal", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight,u.ownerId) from Animal u where u.ownerId.id = :ownerId")
@@ -44,7 +48,8 @@ public class Animal implements Serializable {
     private String race;
 
     @Column(name = "birth")
-    private String birth;
+    @Temporal(TemporalType.DATE)
+    private Date birth;
 
 //    @Column(name = "picture")
 //    private byte[] picture;
@@ -52,8 +57,9 @@ public class Animal implements Serializable {
     @Column(name = "actualWeight")
     private Integer actualWeight;
 
-//    @Column(name = "evolutionHistoric")
-//    private Evolution evolutionHistoric;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evolutionHistoric")
+    private Evolution evolutionHistoric;
 
     //private String role;
 
@@ -61,12 +67,12 @@ public class Animal implements Serializable {
     @JoinColumn(name = "oxId_fk", nullable = false)
     private User ownerId;
 
-    public void setBirth(String birth) {
+    public void setBirth(Date birth) {
         this.birth = birth;
 
     }
 
-    public Animal(Integer id, String name, String race, String birth, Integer actualWeight) {
+    public Animal(Integer id, String name, String race, Date birth, Integer actualWeight) {
         this.id = id;
         this.name = name;
         this.race = race;
@@ -74,8 +80,23 @@ public class Animal implements Serializable {
         this.actualWeight = actualWeight;
     }
 
+    public Animal(Integer id, String name, String race, Date birth, Integer actualWeight, User user) {
+        this.id = id;
+        this.name = name;
+        this.race = race;
+        this.birth = birth;
+        this.actualWeight = actualWeight;
+        this.ownerId = user;
+    }
+
     public Animal(String name,Integer actualWeight) {
         this.name = name;
         this.actualWeight = actualWeight;
     }
+
+    public void setBirth(String birth) throws ParseException {
+        this.birth = dateFormat.parse(birth);
+    }
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 }

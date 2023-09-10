@@ -4,11 +4,14 @@ import com.meubovinoapp.JWT.CustomerUsersDetailsService;
 import com.meubovinoapp.JWT.JwtFilter;
 import com.meubovinoapp.JWT.JwtUtil;
 import com.meubovinoapp.POJO.Animal;
+import com.meubovinoapp.POJO.Evolution;
 import com.meubovinoapp.POJO.User;
 import com.meubovinoapp.constants.BovinoConstants;
 import com.meubovinoapp.dao.AnimalDAO;
+import com.meubovinoapp.dao.EvolutionDAO;
 import com.meubovinoapp.dao.UserDAO;
 import com.meubovinoapp.service.AnimalService;
+import com.meubovinoapp.service.EvolutionService;
 import com.meubovinoapp.utils.BovinoUtils;
 import com.meubovinoapp.wrapper.AnimalWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -46,6 +51,18 @@ public class AnimalServiceImpl implements AnimalService {
     @Autowired
     JwtFilter jwtFilter;
 
+    @Autowired
+    EvolutionDAO evolutionDAO;
+
+
+    @Autowired
+    EvolutionService evolutionService;
+
+    @Autowired
+    Date dataTempo;
+
+    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+
 
     @Autowired
     private ConversionService conversionService;
@@ -59,6 +76,12 @@ public class AnimalServiceImpl implements AnimalService {
                 if (Objects.isNull(animal)) {
                     if (jwtFilter.isUser() || jwtFilter.isAdmin()) {
                         animal = getAnimalFromMap(requestMap, false);
+                        Evolution evolution = new Evolution();
+                        evolution.setAnimalId(animal);
+                        evolution.setWeight(animal.getActualWeight());
+                        evolution.setRegistryDate(animal.getBirth());
+                        evolutionDAO.save(evolution);
+                        animal.setEvolutionHistoric(evolution);
                         animalDAO.save(animal);
                         log.info("Inside Success  {}", requestMap);
                         return BovinoUtils.getResponseEntity("Successfully Registered.", HttpStatus.OK);
@@ -94,12 +117,18 @@ public class AnimalServiceImpl implements AnimalService {
         }
     }
 
+    //Date é depreciado, usar LocalDate
+    //dataConvertida pode retornar Nulo e quebrar meu código, depois fazer um if/else ou try/catch
+    //Vou tentar tratar possivel erro de data na função addEvolution da classe EvolutionService
     public ResponseEntity<String> addNewWeight(Map<String, String> requestMap) {
         try {
             if (validatedNewWeight(requestMap)) {
                 Animal animal = animalDAO.findAnimalById(Integer.valueOf(requestMap.get("id")));
                 if (Objects.isNull(animal)) {
                     animal.setActualWeight(Integer.valueOf(requestMap.get("weight")));
+                    String dataFormatada = formato.format(dataTempo);
+                    Date dataConvertida = formato.parse(dataFormatada);
+                    evolutionService.addEvolution(animal,animal.getActualWeight(),dataConvertida);
                     animalDAO.save(animal);
                 } else {
                     return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
@@ -111,6 +140,10 @@ public class AnimalServiceImpl implements AnimalService {
         return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
+
+    //preciso resolver como o Evolution fica quando eu dou um update no animal
+    //provavelmente vou alterar o ultimo evolution que tinha
     public ResponseEntity<String> updateAnimal(Map<String, String> requestMap) {
         try {
             if (jwtFilter.isAdmin() || jwtFilter.isUser()) {
@@ -118,7 +151,7 @@ public class AnimalServiceImpl implements AnimalService {
                     int animalId = Integer.parseInt(requestMap.get("id"));
                     Optional<Animal> optional = Optional.ofNullable(animalDAO.findAnimalById(Integer.parseInt(requestMap.get("id"))));
                     if (!optional.isEmpty()) {
-                        Animal existingAnimal = optional.get();
+                       //Animal existingAnimal = optional.get();
                         Animal updatedAnimal = getAnimalFromMap(requestMap, false);
                         updatedAnimal.setId(animalId);
                         animalDAO.save(updatedAnimal);
@@ -143,9 +176,10 @@ public class AnimalServiceImpl implements AnimalService {
         try {
             if (jwtFilter.isAdmin()) {
                  Integer id = Integer.valueOf(requestMap.get("id"));
-                Optional optional = animalDAO.findById(id);
+                Optional<Animal> optional = animalDAO.findById(id);
                 if (!optional.isEmpty()) {
                     animalDAO.deleteById(id);
+                    evolutionService.removeAllEvolutions(id);
                     return BovinoUtils.getResponseEntity("Animal Deleted Succesfully", HttpStatus.OK);
                 }
                 return BovinoUtils.getResponseEntity("Animal id does not exist.", HttpStatus.OK);
@@ -225,7 +259,7 @@ public class AnimalServiceImpl implements AnimalService {
         return false;
     }
 
-    private Animal getAnimalFromMap(Map<String, String> requestMap, boolean isAdd) {
+    private Animal getAnimalFromMap(Map<String, String> requestMap, boolean isAdd) throws ParseException {
 
         Animal animal = new Animal();
 

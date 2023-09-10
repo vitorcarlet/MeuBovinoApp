@@ -22,7 +22,7 @@ public class AnimalWrapper {
 
     private String race;
 
-    private String birth;
+    private Date birth;
 
 
     private int actualWeight;
@@ -34,7 +34,7 @@ public class AnimalWrapper {
     private Integer ownerIdId;
 
 
-    public AnimalWrapper(Integer id, String name, String race, String birth, int actualWeight) {
+    public AnimalWrapper(Integer id, String name, String race, Date birth, int actualWeight) {
         this.id = id;
         this.name = name;
         this.race = race;
@@ -42,7 +42,7 @@ public class AnimalWrapper {
         this.actualWeight = actualWeight;
     }
 
-    public AnimalWrapper(Integer id, String name, String race, String birth, Integer actualWeight, User ownerId) {
+    public AnimalWrapper(Integer id, String name, String race, Date birth, Integer actualWeight, User ownerId) {
         this.id = id;
         this.name = name;
         this.race = race;
@@ -51,7 +51,7 @@ public class AnimalWrapper {
         this.ownerId = ownerId;
     }
 
-    public AnimalWrapper(Integer id, String name, String race, String birth, Integer actualWeight, Integer ownerId) {
+    public AnimalWrapper(Integer id, String name, String race, Date birth, Integer actualWeight, Integer ownerId) {
         this.id = id;
         this.name = name;
         this.race = race;
