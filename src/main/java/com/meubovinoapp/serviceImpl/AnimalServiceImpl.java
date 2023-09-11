@@ -61,7 +61,9 @@ public class AnimalServiceImpl implements AnimalService {
 
     Date dataTempo;
 
-    DateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+    DateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+
+    DateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
     @Autowired
@@ -127,16 +129,19 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     //Date é depreciado, usar LocalDate
-    //dataConvertida pode retornar Nulo e quebrar meu código, depois fazer um if/else ou try/catch
     //Vou tentar tratar possivel erro de data na função addEvolution da classe EvolutionService
     public ResponseEntity<String> addNewWeight(Map<String, String> requestMap) {
         try {
             if (validatedNewWeight(requestMap)) {
                 Animal animal = animalDAO.findAnimalById(Integer.valueOf(requestMap.get("id")));
                 if (Objects.isNull(animal)) {
+
                     animal.setActualWeight(Integer.valueOf(requestMap.get("weight")));
                     String dataFormatada = formato.format(dataTempo);
-                    Date dataConvertida = formato.parse(dataFormatada);
+                    Date dataConvertida = mysqlDateFormat.parse(dataFormatada);
+                    if(Objects.isNull(dataConvertida)){
+                        return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                    }
                     evolutionService.addEvolution(animal,animal.getActualWeight(),dataConvertida);
                     animalDAO.save(animal);
                 } else {

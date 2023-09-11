@@ -36,6 +36,7 @@ public class Evolution implements Serializable {
     private Integer id;
 
     @Column(name = "registryDate")
+    @Temporal(TemporalType.DATE)
     private Date registryDate;
 
     @Column(name = "weight")
