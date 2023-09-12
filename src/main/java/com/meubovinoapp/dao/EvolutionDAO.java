@@ -1,5 +1,6 @@
 package com.meubovinoapp.dao;
 
+import com.meubovinoapp.POJO.Animal;
 import com.meubovinoapp.POJO.Dashboard;
 import com.meubovinoapp.POJO.Evolution;
 import com.meubovinoapp.wrapper.EvolutionWrapper;
@@ -17,4 +18,7 @@ public interface EvolutionDAO extends JpaRepository<Evolution,Integer> {
 
     Evolution findByAnimalId(@Param("animalId")Integer animalId);
 
+    Evolution findByAnimalIdAndWeight(Integer actualWeight, Integer animalId);
+
+    void deleteAllByAnimalId(Animal animal);
 }

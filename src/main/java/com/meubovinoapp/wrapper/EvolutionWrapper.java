@@ -21,21 +21,35 @@ public class EvolutionWrapper  {
 
     private int weight;
 
-    private Animal animal;
+    private Animal animalId;
 
-    private Integer animalId;
+    private Integer animalIdId;
 
-
-    public EvolutionWrapper(Date registryDate, int weight, Animal animal) {
-        this.registryDate = registryDate;
-        this.weight = weight;
-        this.animal = animal;
-    }
-
-    public EvolutionWrapper(Date registryDate, int weight, Integer animalId) {
+    public EvolutionWrapper(Integer id, Date registryDate, int weight, Animal animalId, Integer animalIdId) {
+        this.id = id;
         this.registryDate = registryDate;
         this.weight = weight;
         this.animalId = animalId;
+        this.animalIdId = animalIdId;
+    }
+
+    public EvolutionWrapper(Integer id, Date registryDate, int weight, Animal animalId) {
+        this.id = id;
+        this.registryDate = registryDate;
+        this.weight = weight;
+        this.animalId = animalId;
+    }
+
+    public EvolutionWrapper(Date registryDate, int weight, Animal animalId) {
+        this.registryDate = registryDate;
+        this.weight = weight;
+        this.animalId = animalId;
+    }
+
+    public EvolutionWrapper(Date registryDate, int weight, Integer animalIdId) {
+        this.registryDate = registryDate;
+        this.weight = weight;
+        this.animalIdId = animalIdId;
     }
 
     public EvolutionWrapper(Date registryDate, int weight) {

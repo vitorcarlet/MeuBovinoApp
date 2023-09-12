@@ -25,7 +25,7 @@ public class AnimalRestImpl implements AnimalRest {
     @Override
     public ResponseEntity<String> addAnimal(Map<String, String> requestMap) {
         try{
-            return animalService.addAnimal(requestMap);
+           return  animalService.addAnimal(requestMap);
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -66,7 +66,7 @@ public class AnimalRestImpl implements AnimalRest {
     @Override
     public ResponseEntity<String> deleteAnimal(Map<String, String> requestMap) {
         try{
-            return animalService.deleteProduct(requestMap);
+            return animalService.deleteAnimal(requestMap);
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -76,13 +76,16 @@ public class AnimalRestImpl implements AnimalRest {
 
     @Override
     public ResponseEntity<String> addNewWeight(Map<String, String> requestMap) {
-        return null;
+        try{
+            return animalService.addNewWeight(requestMap);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
-    @Override
-    public ResponseEntity<String> removeNewWeight(Map<String, String> requestMap) {
-        return null;
-    }
+
 
 
 }

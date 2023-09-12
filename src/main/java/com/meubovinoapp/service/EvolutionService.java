@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface EvolutionService {
      ResponseEntity<List<EvolutionWrapper>> getAllDates(String animalName);
@@ -15,4 +16,7 @@ public interface EvolutionService {
 
      ResponseEntity<String> removeAllEvolutions(Integer id);
 
-    }
+    ResponseEntity<String> editEvolution(Map<String, String> requestMap);
+
+    ResponseEntity<String> removeEvolution(Integer id);
+}

@@ -30,8 +30,6 @@ public interface AnimalRest {
     @PostMapping(path = "/addNewWeight")
     public ResponseEntity<String> addNewWeight(@RequestBody(required = true) Map<String, String> requestMap);
 
-    @PostMapping(path = "/removeNewWeight")
-    public ResponseEntity<String> removeNewWeight(@RequestBody(required = true) Map<String, String> requestMap);
 
 
 }

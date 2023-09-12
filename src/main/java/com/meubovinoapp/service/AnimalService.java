@@ -18,10 +18,10 @@ public interface AnimalService {
 
     ResponseEntity<String> addAnimal(Map<String,String> requestMap);
 
-    ResponseEntity<String> removeAnimal(Map<String,String> requestMap);
+   //ResponseEntity<String> removeAnimal(Map<String,String> requestMap);
 
 
     ResponseEntity<String> updateAnimal(Map<String, String> requestMap);
 
-    ResponseEntity<String> deleteProduct(Map<String, String> requestMap);
+    ResponseEntity<String> deleteAnimal(Map<String, String> requestMap);
 }
