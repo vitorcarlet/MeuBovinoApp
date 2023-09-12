@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -69,6 +70,7 @@ public class AnimalServiceImpl implements AnimalService {
     @Autowired
     private ConversionService conversionService;
 
+    @Transactional
     public ResponseEntity<String> addAnimal(Map<String, String> requestMap) {
         log.info("Inside addAnimal {}", requestMap);
         try {
