@@ -20,7 +20,7 @@ public interface EvolutionRest {
     ResponseEntity<String> editEvolution(@RequestBody(required = true) Map<String, String> requestMap);
 
     @PostMapping(path = "/remove/{id}")
-    ResponseEntity<String> removeEvolution(Integer id);
+    ResponseEntity<String> removeEvolution(@PathVariable Integer id);
 
 
 }

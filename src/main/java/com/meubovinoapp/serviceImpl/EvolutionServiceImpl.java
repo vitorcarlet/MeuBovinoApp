@@ -62,7 +62,8 @@ public class EvolutionServiceImpl implements EvolutionService {
                 List<EvolutionWrapper> evolutionWrappers = new ArrayList<>();
 
                 for(EvolutionWrapper evolution: evolutionList){
-                    EvolutionWrapper evolutionWrapper = new EvolutionWrapper(evolution.getRegistryDate(),evolution.getWeight());
+                    String dataFormatada = formato.format(evolution.getRegistryDate());
+                    EvolutionWrapper evolutionWrapper = new EvolutionWrapper(dataFormatada,evolution.getWeight());
                     evolutionWrappers.add(evolutionWrapper);
                     log.info(String.valueOf(evolutionWrapper));
                 }
@@ -78,13 +79,14 @@ public class EvolutionServiceImpl implements EvolutionService {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public ResponseEntity<String> addEvolution(Animal animalId, int weight, Date date){
+    public ResponseEntity<String> addEvolution(Animal animal, int weight, Date date){
         try{
-             evolutionDAO.save(new Evolution(animalId,weight,date));
+             evolutionDAO.save(new Evolution(animal,weight,date));
+            return BovinoUtils.getResponseEntity("Evolution added", HttpStatus.OK);
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG+"wrong do addevolution",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Transactional
@@ -115,16 +117,17 @@ public class EvolutionServiceImpl implements EvolutionService {
     public ResponseEntity<String> editEvolution(Map<String, String> requestMap) {
         try{
             Optional<Evolution> optional = evolutionDAO.findById(Integer.valueOf(requestMap.get("id")));
-            if(!optional.isEmpty()){
-                Evolution evolution = optional.get();
-                String dataFormatada = formato.format(requestMap.get("date"));
-                Date dataConvertida = mysqlDateFormat.parse(dataFormatada);
-                evolution.setRegistryDate(dataConvertida);
-                evolution.setWeight(Integer.parseInt(requestMap.get("weight")));
-
-                evolutionDAO.save(evolution);
+            if (optional.isEmpty()) {
+                return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA+"editEvolution",HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA,HttpStatus.INTERNAL_SERVER_ERROR);
+            Evolution evolution = optional.get();
+            //String dataFormatada = formato.format(requestMap.get("date"));
+            Date dataConvertida = mysqlDateFormat.parse(requestMap.get("date"));
+            evolution.setRegistryDate(dataConvertida);
+            evolution.setWeight(Integer.parseInt(requestMap.get("weight")));
+
+            evolutionDAO.save(evolution);
+            return BovinoUtils.getResponseEntity("Objeto Editado",HttpStatus.OK);
 
         }catch (Exception ex){
             ex.printStackTrace();
@@ -144,19 +147,23 @@ public class EvolutionServiceImpl implements EvolutionService {
         return false;
     }
 
+    @Transactional
     @Override
     public ResponseEntity<String> removeEvolution(Integer id) {
-        try{
+        try {
             Optional<Evolution> evolutionOptional = evolutionDAO.findById(id);
             if (evolutionOptional.isPresent()) {
                 Evolution evolution = evolutionOptional.get();
                 evolutionDAO.delete(evolution);
                 return BovinoUtils.getResponseEntity("Evolution removed successfully.", HttpStatus.OK);
+            } else {
+                // Return a 404 Not Found response if the entity is not found.
+                return BovinoUtils.getResponseEntity("Evolution not found.", HttpStatus.NOT_FOUND);
             }
-            return BovinoUtils.getResponseEntity("Evolution not found .", HttpStatus.BAD_REQUEST);
-        }catch (Exception ex){
+        } catch (Exception ex) {
+            // Log the exception and return an internal server error response.
             ex.printStackTrace();
+            return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

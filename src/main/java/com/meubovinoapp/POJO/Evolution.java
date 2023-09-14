@@ -17,8 +17,9 @@ import java.util.Date;
 
 @NamedQuery(name = "Evolution.findByAnimalId", query = "SELECT e.id, e.registryDate, e.weight FROM Evolution e WHERE e.animalId.id =:animalId")
 
-@NamedQuery(name = "Evolution.findByAnimalIdAndWeight", query = "SELECT e.id, e.registryDate, e.weight, e.animalId from Evolution e Where e.animalId.id =:animalId and e.weight = actualWeight")
+//@NamedQuery(name = "Evolution.findByAnimalIdAndWeight", query = "SELECT e.id, e.registryDate, e.weight from Evolution e Where e.weight =: actualWeight  and e.animalId.id=:animalId ")
 
+@NamedQuery(name = "Evolution.findByAnimalIdAndWeight", query = "SELECT e FROM Evolution e JOIN com.meubovinoapp.POJO.Animal a ON e.animalId = a.id WHERE e.weight = :actualWeight AND a.id = :animalId")
 
 @Data
 @Entity
@@ -45,7 +46,7 @@ public class Evolution implements Serializable {
     @Column(name = "weight")
     private int weight;
 
-    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "animalId_fk", nullable = false)
     private Animal animalId;
 

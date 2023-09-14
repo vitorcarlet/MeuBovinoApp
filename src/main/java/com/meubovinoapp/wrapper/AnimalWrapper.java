@@ -24,6 +24,8 @@ public class AnimalWrapper {
 
     private Date birth;
 
+    private String birthday;
+
 
     private int actualWeight;
 
@@ -63,6 +65,15 @@ public class AnimalWrapper {
     public AnimalWrapper(String name, int actualWeight) {
         this.name = name;
         this.actualWeight = actualWeight;
+    }
+
+    public AnimalWrapper(Integer id, String name, String race, String format, int actualWeight, Integer integer) {
+        this.id = id;
+        this.name = name;
+        this.race = race;
+        this.birthday = format;
+        this.actualWeight = actualWeight;
+        this.ownerIdId = integer;
     }
 
     public static AnimalWrapper fromAnimal(Animal animal) {

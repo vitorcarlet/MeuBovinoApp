@@ -19,6 +19,8 @@ public class EvolutionWrapper  {
 
     private Date registryDate;
 
+    private String registryDateString;
+
     private int weight;
 
     private Animal animalId;
@@ -54,6 +56,11 @@ public class EvolutionWrapper  {
 
     public EvolutionWrapper(Date registryDate, int weight) {
         this.registryDate = registryDate;
+        this.weight = weight;
+    }
+
+    public EvolutionWrapper(String dataFormatada, int weight) {
+        this.registryDateString = dataFormatada;
         this.weight = weight;
     }
 }

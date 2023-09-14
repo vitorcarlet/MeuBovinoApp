@@ -58,9 +58,6 @@ public class Animal implements Serializable {
     @Column(name = "actualWeight")
     private Integer actualWeight;
 
-    @OneToOne(fetch = FetchType.LAZY )
-    @JoinColumn(name = "evolutionHistoric")
-    private Evolution evolutionHistoric;
 
     //private String role;
 
