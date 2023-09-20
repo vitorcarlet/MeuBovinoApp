@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
         } catch (Exception ex) {
-            log.error("{}", ex);
+            log.error("{Inside Exception}", ex);
         }
         return new ResponseEntity<String>("{\"message\":\"" + "Bad Credentials." + "\"}",
                 HttpStatus.BAD_REQUEST);
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
         try {
             if (jwtFilter.isAdmin()) {
                 Optional<User> optional = userDao.findById(Integer.parseInt(requestMap.get("id")));
-                if (!optional.isEmpty()) {
+                if (optional.isPresent()) {
                     userDao.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
                     //sendMailToAllAdmin(requestMap.get("status"), optional.get().getEmail(), userDao.getAllAdmin());
                     return BovinoUtils.getResponseEntity("User Status Updated Successfully", HttpStatus.OK);
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
         try {
             User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
-            if (!userObj.equals(null)) {
+            if (userObj != null) {
                 if (userObj.getPassword().equals(requestMap.get("oldPassword"))) {
                     userObj.setPassword((requestMap.get("newPassword")));
                     userDao.save(userObj);

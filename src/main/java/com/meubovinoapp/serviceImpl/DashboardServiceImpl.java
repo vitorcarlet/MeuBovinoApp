@@ -43,7 +43,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public ResponseEntity<String> countAnimals(Integer user_Id_fk) {
         try {
-            if (jwtFilter.isAdmin() || jwtFilter.isUser()) {
+            if (jwtFilter.isAdminOrUser()) {
                 String countDashboard = String.valueOf(dashboardDAO.countAnimals(user_Id_fk));
                 if (!countDashboard.isBlank()) {
                     return new ResponseEntity<>(countDashboard, HttpStatus.OK);
@@ -63,7 +63,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public ResponseEntity<String> calculateAverageWeight(Integer user_Id_fk) {
         try {
-            if (jwtFilter.isAdmin() || jwtFilter.isUser()){
+            if (jwtFilter.isAdminOrUser()) {
                 String averageWeight = String.valueOf(dashboardDAO.calculateAverageWeight(user_Id_fk));
                 if (!averageWeight.isBlank()) {
                     return new ResponseEntity<>(averageWeight, HttpStatus.OK);
@@ -81,19 +81,25 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
-
-        User userObj = userDAO.findByEmail(jwtFilter.getCurrentUser());
-        if (Objects.isNull(userObj)) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            if (jwtFilter.isAdminOrUser()) {
+                User userObj = userDAO.findByEmail(jwtFilter.getCurrentUser());
+                if (Objects.isNull(userObj)) {
+                    return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+                log.info(String.valueOf(userObj.getId()));
+                List<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId2((userObj.getId().intValue()));
+                List<AnimalWrapper> animalWrappers = new ArrayList<>();
+                for (AnimalWrapper animal : animals) {
+                    AnimalWrapper animalWrapper = new AnimalWrapper(animal.getName(), animal.getActualWeight());
+                    animalWrappers.add(animalWrapper);
+                }
+                return new ResponseEntity<>(animalWrappers, HttpStatus.OK);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        log.info(String.valueOf(userObj.getId()));
-        List<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId2((userObj.getId().intValue()));
-        List<AnimalWrapper> animalWrappers = new ArrayList<>();
-        for (AnimalWrapper animal : animals) {
-            AnimalWrapper animalWrapper = new AnimalWrapper(animal.getName(), animal.getActualWeight());
-            animalWrappers.add(animalWrapper);
-        }
-        return new ResponseEntity<>(animalWrappers, HttpStatus.OK);
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
 
 }
