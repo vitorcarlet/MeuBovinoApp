@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-@NamedQuery(name = "Evolution.findAllDates", query = "SELECT new com.meubovinoapp.wrapper.EvolutionWrapper(e.registryDate, e.weight, e.animalId)  FROM Evolution e WHERE e.animalId.id =:animalId")
+@NamedQuery(name = "Evolution.findAllDates", query = "SELECT new com.meubovinoapp.wrapper.EvolutionWrapper(e.id,e.registryDate, e.weight, e.animalId)  FROM Evolution e WHERE e.animalId.id =:animalId")
 
 @NamedQuery(name = "Evolution.findByAnimalId", query = "SELECT e.id, e.registryDate, e.weight FROM Evolution e WHERE e.animalId.id =:animalId")
 

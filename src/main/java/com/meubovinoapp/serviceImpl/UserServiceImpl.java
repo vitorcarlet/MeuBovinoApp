@@ -1,6 +1,5 @@
 package com.meubovinoapp.serviceImpl;
 
-import com.google.common.base.Strings;
 import com.meubovinoapp.JWT.CustomerUsersDetailsService;
 import com.meubovinoapp.JWT.JwtFilter;
 import com.meubovinoapp.JWT.JwtUtil;
@@ -39,7 +38,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     JwtFilter jwtFilter;
-
 
 
     @Override
@@ -179,15 +177,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
-        try{
+        try {
             User user = userDao.findByEmail(requestMap.get("email"));
-            if(!Objects.isNull(user) && !Strings.isNullOrEmpty(user.getEmail())){
-                return BovinoUtils.getResponseEntity("Check your mail for Credentials.",HttpStatus.OK);
-            }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> getUserIdByEmail(Map<String, String> email) {
+        try {
+                User user = userDao.findByEmail(email.get("email"));
+                if (!Objects.isNull(user)) {
+                    String userId = String.valueOf(user.getId());
+                    return new ResponseEntity<>(userId, HttpStatus.OK);
+                }
+                return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA, HttpStatus.UNAUTHORIZED);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

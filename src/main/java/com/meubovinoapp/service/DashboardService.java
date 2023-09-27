@@ -12,5 +12,7 @@ public interface DashboardService {
     ResponseEntity<String> calculateAverageWeight(Integer user_Id_fk);
 
     ResponseEntity<List<AnimalWrapper>> getAllAnimals();
+
+
 }
 

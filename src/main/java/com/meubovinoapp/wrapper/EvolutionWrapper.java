@@ -23,35 +23,35 @@ public class EvolutionWrapper  {
 
     private int weight;
 
-    private Animal animalId;
+    private Animal animal;
 
-    private Integer animalIdId;
+    private Integer animalId;
 
-    public EvolutionWrapper(Integer id, Date registryDate, int weight, Animal animalId, Integer animalIdId) {
+    public EvolutionWrapper(Integer id, Date registryDate, int weight, Animal animal, Integer animalId) {
         this.id = id;
         this.registryDate = registryDate;
         this.weight = weight;
+        this.animal = animal;
         this.animalId = animalId;
-        this.animalIdId = animalIdId;
     }
 
-    public EvolutionWrapper(Integer id, Date registryDate, int weight, Animal animalId) {
+    public EvolutionWrapper(Integer id, Date registryDate, int weight, Animal animal) {
         this.id = id;
         this.registryDate = registryDate;
         this.weight = weight;
-        this.animalId = animalId;
+        this.animal = animal;
     }
 
-    public EvolutionWrapper(Date registryDate, int weight, Animal animalId) {
+    public EvolutionWrapper(Date registryDate, int weight, Animal animal) {
+        this.registryDate = registryDate;
+        this.weight = weight;
+        this.animal = animal;
+    }
+
+    public EvolutionWrapper(Date registryDate, int weight, Integer animalId) {
         this.registryDate = registryDate;
         this.weight = weight;
         this.animalId = animalId;
-    }
-
-    public EvolutionWrapper(Date registryDate, int weight, Integer animalIdId) {
-        this.registryDate = registryDate;
-        this.weight = weight;
-        this.animalIdId = animalIdId;
     }
 
     public EvolutionWrapper(Date registryDate, int weight) {
@@ -63,4 +63,18 @@ public class EvolutionWrapper  {
         this.registryDateString = dataFormatada;
         this.weight = weight;
     }
+
+    public EvolutionWrapper(Integer id, String dataFormatada, int weight) {
+        this.id = id;
+        this.registryDateString = dataFormatada;
+        this.weight = weight;
+    }
+
+    public EvolutionWrapper(Integer id, String dataFormatada, int weight, Integer animal) {
+        this.id = id;
+        this.registryDateString = dataFormatada;
+        this.weight = weight;
+        this.animalId = animal;
+    }
+
 }
