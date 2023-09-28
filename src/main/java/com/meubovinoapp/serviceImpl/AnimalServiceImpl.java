@@ -164,7 +164,7 @@ public class AnimalServiceImpl implements AnimalService {
                         evolutionService.addEvolution(animal, animal.getActualWeight(), dataConvertida);
 
                         animalDAO.save(animal);
-                        return BovinoUtils.getResponseEntity("novo peso adicionado com sucesso", HttpStatus.INTERNAL_SERVER_ERROR);
+                        return BovinoUtils.getResponseEntity("novo peso adicionado com sucesso", HttpStatus.OK);
 
                     } else {
                         return BovinoUtils.getResponseEntity(BovinoConstants.INVALID_DATA + "erro do animal", HttpStatus.BAD_REQUEST);
