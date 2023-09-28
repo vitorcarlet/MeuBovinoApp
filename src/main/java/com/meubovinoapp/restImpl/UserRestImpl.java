@@ -72,6 +72,17 @@ public class UserRestImpl implements UserRest {
     }
 
     @Override
+    public ResponseEntity<String> getUserIdByEmail(Map<String,String> email) {
+        try{
+            return userService.getUserIdByEmail(email);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    @Override
     public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
         try{
             return userService.changePassword(requestMap);

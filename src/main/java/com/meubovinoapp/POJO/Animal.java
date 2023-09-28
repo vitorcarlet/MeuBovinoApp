@@ -61,7 +61,7 @@ public class Animal implements Serializable {
 
     //private String role;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+    @ManyToOne(fetch = FetchType.EAGER )
     @JoinColumn(name = "oxId_fk", nullable = false)
     private User ownerId;
 

@@ -59,8 +59,9 @@ public class EvolutionServiceImpl implements EvolutionService {
                 List<EvolutionWrapper> evolutionWrappers = new ArrayList<>();
 
                 for (EvolutionWrapper evolution : evolutionList) {
+                    log.info(String.valueOf(evolution.getId()));
                     String dataFormatada = formato.format(evolution.getRegistryDate());
-                    EvolutionWrapper evolutionWrapper = new EvolutionWrapper(dataFormatada, evolution.getWeight());
+                    EvolutionWrapper evolutionWrapper = new EvolutionWrapper(evolution.getId(),dataFormatada, evolution.getWeight(),evolution.getAnimal().getId());
                     evolutionWrappers.add(evolutionWrapper);
                     log.info(String.valueOf(evolutionWrapper));
                 }
