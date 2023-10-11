@@ -11,14 +11,17 @@ import com.meubovinoapp.utils.BovinoUtils;
 import com.meubovinoapp.wrapper.AnimalWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -79,21 +82,19 @@ public class DashboardServiceImpl implements DashboardService {
         return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
+
     @Override
-    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
+    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable) {
 
         User userObj = userDAO.findByEmail(jwtFilter.getCurrentUser());
         if (Objects.isNull(userObj)) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new PageImpl<>(new ArrayList<>()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         log.info(String.valueOf(userObj.getId()));
-        List<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId2((userObj.getId().intValue()));
-        List<AnimalWrapper> animalWrappers = new ArrayList<>();
-        for (AnimalWrapper animal : animals) {
-            AnimalWrapper animalWrapper = new AnimalWrapper(animal.getName(), animal.getActualWeight());
-            animalWrappers.add(animalWrapper);
-        }
-        return new ResponseEntity<>(animalWrappers, HttpStatus.OK);
+        //Pageable pageable = PageRequest.of(page, size);
+        Page<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId2(userObj.getId().intValue(), pageable);
+        return new ResponseEntity<>(animals, HttpStatus.OK);
     }
 
 }

@@ -17,6 +17,8 @@ import com.meubovinoapp.wrapper.AnimalWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -142,6 +144,46 @@ public class AnimalServiceImpl implements AnimalService {
         }
     }
 
+    @Override
+    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable) {
+         {
+            try {
+                if (jwtFilter.isAdminOrUser()) {
+                    User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
+                    if (Objects.isNull(userObj)) {
+                        return new ResponseEntity<>(Page.empty(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+
+                    Page<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId(userObj.getId(), pageable);
+
+                    return new ResponseEntity<>(animals, HttpStatus.OK);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            return new ResponseEntity<>(Page.empty(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public ResponseEntity<AnimalWrapper> findAnimalById(String id) {
+        try {
+            Integer idInt = Integer.valueOf(id);
+            Animal animal = animalDAO.findById(idInt).get();
+            if (Objects.isNull(animal)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            AnimalWrapper animalWrapper = new AnimalWrapper(animal.getId(), animal.getName(), animal.getRace(),animal.getActualWeight(), animal.getOwnerId(), animal.getBirth(), animal.getDataInsercao().getTime());
+
+            return new ResponseEntity<>(animalWrapper, HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+    }
+
 
     //Date é depreciado, usar LocalDate
     //Vou tentar tratar possivel erro de data na função addEvolution da classe EvolutionService
@@ -232,46 +274,10 @@ public class AnimalServiceImpl implements AnimalService {
         return false;
     }
 
-    public ResponseEntity<Animal> findAnimalById(Integer id) {
-        try {
-            Animal animal = animalDAO.findById(id).get();
-            if (Objects.isNull(animal)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            return new ResponseEntity<>(animalDAO.getById(id), HttpStatus.OK);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-    }
 
 
-    @Override
-    public ResponseEntity<List<AnimalWrapper>> getAllAnimals() {
-        try {
-            if (jwtFilter.isAdminOrUser()) {
-                User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
-                if (Objects.isNull(userObj)) {
-                    return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-                List<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId(userObj.getId());
-                List<AnimalWrapper> animalWrappers = new ArrayList<>();
-                for (AnimalWrapper animal : animals) {
-                    AnimalWrapper animalWrapper = new AnimalWrapper(animal.getId(), animal.getName(), animal.getRace(),
-                            formato.format(animal.getBirth()), animal.getActualWeight(),
-                            (animal.getOwnerId() != null) ? animal.getOwnerId().getId() : null
-                    );
-                    animalWrappers.add(animalWrapper);
-                }
-                return new ResponseEntity<>(animalWrappers, HttpStatus.OK);
-            }
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.BAD_REQUEST);
-    }
+
+
 
 
     private boolean validatedNewWeight(Map<String, String> requestMap) {

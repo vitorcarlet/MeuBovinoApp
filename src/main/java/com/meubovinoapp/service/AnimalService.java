@@ -2,6 +2,8 @@ package com.meubovinoapp.service;
 
 import com.meubovinoapp.POJO.Animal;
 import com.meubovinoapp.wrapper.AnimalWrapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -9,9 +11,8 @@ import java.util.Map;
 
 public interface AnimalService {
 
-    ResponseEntity<Animal> findAnimalById(Integer id);
+    ResponseEntity<AnimalWrapper> findAnimalById(String id);
 
-    ResponseEntity<List<AnimalWrapper>> getAllAnimals();
 
 
     ResponseEntity<String> addNewWeight(Map<String,String> requestMap);
@@ -24,4 +25,6 @@ public interface AnimalService {
     ResponseEntity<String> updateAnimal(Map<String, String> requestMap);
 
     ResponseEntity<String> deleteAnimal(Map<String, String> requestMap);
+
+    ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable);
 }

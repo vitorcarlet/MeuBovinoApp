@@ -29,6 +29,8 @@ public class AnimalWrapper {
 
     private int actualWeight;
 
+    private Long dataInsercao;
+
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private User ownerId;
@@ -76,6 +78,16 @@ public class AnimalWrapper {
         this.ownerIdId = integer;
     }
 
+    public AnimalWrapper(Integer id, String name, String race, int actualWeight, User ownerId, Date birth, Long dataInsercao) {
+        this.id = id;
+        this.name = name;
+        this.race = race;
+        this.birthday = String.valueOf(birth);
+        this.actualWeight = actualWeight;
+        this.ownerIdId = ownerId.getId();
+        this.dataInsercao = dataInsercao;
+    }
+
     public static AnimalWrapper fromAnimal(Animal animal) {
         AnimalWrapper animalWrapper = new AnimalWrapper();
         animalWrapper.setId(animal.getId());
@@ -84,6 +96,7 @@ public class AnimalWrapper {
         animalWrapper.setBirth(animal.getBirth());
         animalWrapper.setActualWeight(animal.getActualWeight());
         animalWrapper.setOwnerId(animal.getOwnerId());
+        animalWrapper.setDataInsercao(animal.getDataInsercao().getTime());
         // Configure outros atributos conforme necessário
         return animalWrapper;
     }
