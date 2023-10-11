@@ -1,6 +1,8 @@
 package com.meubovinoapp.rest;
 
 import com.meubovinoapp.wrapper.AnimalWrapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,6 @@ public interface DashboardRest {
     ResponseEntity<String> calculateAverageWeight(@PathVariable Integer user_Id_fk);
 
     @GetMapping(path = "/getAllAnimals")
-    public ResponseEntity<List<AnimalWrapper>> getAllAnimals();
+    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable);
 
 }

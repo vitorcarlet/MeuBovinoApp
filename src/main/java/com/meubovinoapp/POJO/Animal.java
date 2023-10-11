@@ -4,6 +4,7 @@ import com.meubovinoapp.wrapper.AnimalWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -64,6 +65,12 @@ public class Animal implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER )
     @JoinColumn(name = "oxId_fk", nullable = false)
     private User ownerId;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dtcreated")
+    private Date dataInsercao;
+
 
     public void setBirth(Date birth) {
         this.birth = birth;

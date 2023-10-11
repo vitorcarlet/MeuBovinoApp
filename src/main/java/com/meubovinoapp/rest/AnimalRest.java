@@ -2,10 +2,11 @@ package com.meubovinoapp.rest;
 
 import com.meubovinoapp.POJO.Animal;
 import com.meubovinoapp.wrapper.AnimalWrapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 //@RestController
@@ -16,10 +17,12 @@ public interface AnimalRest {
     public ResponseEntity<String> addAnimal(@RequestBody(required = true) Map<String, String> requestMap);
 
     @GetMapping(path = "/get")
-    public ResponseEntity<List<AnimalWrapper>> getAllAnimals();
+    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable);
+
+    //ResponseEntity<Page<AnimalWrapper>> getAllAnimals();
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Animal> findById(@PathVariable Integer id);
+    public ResponseEntity<AnimalWrapper> findById(@PathVariable String id);
 
     @PostMapping(path = "/update")
     public ResponseEntity<String> updateAnimal(@RequestBody(required = true) Map<String, String> requestMap);

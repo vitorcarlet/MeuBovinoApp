@@ -4,6 +4,7 @@ import jdk.jfr.Name;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -49,6 +50,11 @@ public class Evolution implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "animalId_fk", nullable = false)
     private Animal animalId;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dtcreated")
+    private Date dataInsercao;
 
     public Evolution(Animal animalId, int weight, Date date) {
         this.animalId = animalId;
