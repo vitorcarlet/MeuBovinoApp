@@ -28,7 +28,7 @@ Aqui estão algumas imagens do BovinoApp para uma visualização mais detalhada:
 
 
 ![Pagina Inicial](img/bovino1.png)
-![graficos](img/bovino2png)
+![graficos](img/bovino2.png)
 ![animais](img/bovino3.png)
 
 ### Como Contribuir
