@@ -1,6 +1,7 @@
 SELECT * FROM bovinoapp.users;
 SELECT * FROM bovinoapp.animals;
 SELECT * FROM bovinoapp.evolution;
+use bovinoapp;
 
 use bovinoapp;
 
@@ -43,7 +44,7 @@ GROUP BY
   MONTH(registry_date);
 
 select avg(weight)
-from evolution
+from evolution;
 
 SELECT *
 FROM animals
@@ -55,5 +56,11 @@ LIMIT 5;
 
 select * from wbois_ano;
 
-use bovinoapp;
+ALTER TABLE evolution
+ADD COLUMN data_insercao TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE evolution
+CHANGE COLUMN data_insercao dtcreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+
 
