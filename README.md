@@ -1,46 +1,42 @@
+## BovinoApp - Bovine Cattle Management
 
+### Overview
 
-## BovinoApp - Gerenciamento de Gado Bovino
+BovinoApp is a project that utilizes the following technologies: Angular 11 and Spring Boot 4. It has been developed to assist in the management of operations related to a cattle farm. The application enables the storage of cattle data, generation of reports, and the execution of business-relevant queries. Additionally, it can notify users about changes in the weight of animals, ensuring they are in compliance with appropriate standards.
 
-### Visão Geral
+### Key Pages
 
-BovinoApp é um projeto que utiliza as seguintes tecnologias: Angular 11 e Spring Boot 4. Ele foi desenvolvido para auxiliar na gestão das operações relacionadas a uma fazenda de gado bovino. O aplicativo permite o armazenamento de dados dos bois, a geração de relatórios e a realização de consultas relevantes para o negócio. Além disso, ele pode notificar os usuários sobre mudanças no peso dos animais, garantindo que estejam de acordo com os padrões adequados.
+BovinoApp consists of the following key pages:
 
-### Páginas Principais
+1. **Registration Page:** Allows for the registration of new animals on the farm, including information such as weight, age, breed, and other relevant characteristics.
 
-O BovinoApp consiste nas seguintes páginas principais:
+2. **Login Page:** Provides secure authentication to access the system, ensuring that only authorized users can use the application.
 
-1. **Página de Cadastro:** Permite o cadastro de novos animais na fazenda, incluindo informações como peso, idade, raça, e outras características relevantes.
+3. **Dashboard Page:** Presents charts and general information about the livestock, including statistics, weight trends, and other essential data for farm management.
 
-2. **Página de Login:** Fornece autenticação segura para acessar o sistema, garantindo que apenas usuários autorizados possam utilizar o aplicativo.
+4. **Animal Page:** Lists all animals registered on the farm, allowing for quick viewing of individual details for each animal.
 
-3. **Página de Dashboard:** Apresenta gráficos e informações gerais sobre o rebanho, incluindo estatísticas, tendências de peso, e outros dados essenciais para a gestão da fazenda.
+5. **Weight Evolution Page:** Displays the weight history of each animal, allowing for visual tracking of weight changes over time.
 
-4. **Página dos Animais:** Lista todos os animais cadastrados na fazenda, permitindo a visualização rápida de detalhes individuais de cada animal.
+6. **Animal Values Page:** Presents the current value of each animal based on the recorded information and current market prices.
 
-5. **Página de Evolução de Peso:** Exibe o histórico de peso de cada animal, permitindo um acompanhamento visual da evolução de peso ao longo do tempo.
+### Project Images
 
-6. **Página de Valores dos Animais:** Apresenta o valor atual de cada animal com base nas informações registradas e nos preços atuais de mercado.
+Here are some images of BovinoApp for a more detailed view:
 
-### Imagens do Projeto
+![Homepage](img/bovino1.png)
+![Charts](img/bovino2.png)
+![Animals](img/bovino3.png)
 
-Aqui estão algumas imagens do BovinoApp para uma visualização mais detalhada:
+### How to Contribute
 
+If you wish to contribute to the development of BovinoApp, follow these steps:
 
-![Pagina Inicial](img/bovino1.png)
-![graficos](img/bovino2.png)
-![animais](img/bovino3.png)
+1. Fork this repository.
+2. Clone your fork to your local machine.
+3. Create a branch for your contribution: `git checkout -b your-feature`.
+4. Make the necessary changes and add meaningful commits.
+5. Push the changes back to your GitHub repository.
+6. Create a pull request to the main repository.
 
-### Como Contribuir
-
-Se você deseja contribuir para o desenvolvimento do BovinoApp, siga estas etapas:
-
-1. Faça um fork deste repositório.
-2. Clone o seu fork em sua máquina local.
-3. Crie uma branch para a sua contribuição: `git checkout -b sua-feature`
-4. Faça as alterações necessárias e adicione commits significativos.
-5. Envie as alterações de volta para o seu repositório no GitHub.
-6. Crie um pull request para o repositório principal.
-
-Agradecemos sua contribuição para tornar o BovinoApp ainda mais eficaz no gerenciamento de gado bovino!
-
+We appreciate your contribution to making BovinoApp even more effective in cattle management!
