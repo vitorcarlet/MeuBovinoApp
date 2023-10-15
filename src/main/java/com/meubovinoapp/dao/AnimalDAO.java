@@ -24,4 +24,5 @@ public interface AnimalDAO extends PagingAndSortingRepository<Animal, Integer> {
     Page<AnimalWrapper> getAllAnimalsByOwnerId2(Integer ownerId, Pageable pageable);
 
 
+    Page<AnimalWrapper> getAllAnimalsByOwnerIdAndNameLike(Integer ownerId, String name, Pageable pageable);
 }

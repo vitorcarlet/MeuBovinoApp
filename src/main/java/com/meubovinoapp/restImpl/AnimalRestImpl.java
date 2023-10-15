@@ -1,6 +1,5 @@
 package com.meubovinoapp.restImpl;
 
-import com.meubovinoapp.POJO.Animal;
 import com.meubovinoapp.constants.BovinoConstants;
 import com.meubovinoapp.rest.AnimalRest;
 import com.meubovinoapp.service.AnimalService;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 @RestController
@@ -33,9 +31,9 @@ public class AnimalRestImpl implements AnimalRest {
     }
 
     @Override
-    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable) {
+    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable, String name) {
         try{
-            return animalService.getAllAnimals(pageable);
+            return animalService.getAllAnimals(pageable,name);
         }catch (Exception ex){
             ex.printStackTrace();
         }

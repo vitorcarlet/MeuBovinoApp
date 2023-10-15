@@ -11,20 +11,18 @@ import java.util.Map;
 
 public interface AnimalService {
 
+    ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable, String name);
+
     ResponseEntity<AnimalWrapper> findAnimalById(String id);
-
-
 
     ResponseEntity<String> addNewWeight(Map<String,String> requestMap);
 
     ResponseEntity<String> addAnimal(Map<String,String> requestMap);
-
-   //ResponseEntity<String> removeAnimal(Map<String,String> requestMap);
 
 
     ResponseEntity<String> updateAnimal(Map<String, String> requestMap);
 
     ResponseEntity<String> deleteAnimal(Map<String, String> requestMap);
 
-    ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable);
+
 }

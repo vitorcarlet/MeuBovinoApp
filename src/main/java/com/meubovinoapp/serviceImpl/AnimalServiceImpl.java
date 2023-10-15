@@ -121,6 +121,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     }
 
+
     //fazer um delete da evolução do animal
     public ResponseEntity<String> deleteAnimal(Map<String, String> requestMap) {
         try {
@@ -144,26 +145,31 @@ public class AnimalServiceImpl implements AnimalService {
         }
     }
 
+
     @Override
-    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable) {
-         {
-            try {
-                if (jwtFilter.isAdminOrUser()) {
-                    User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
-                    if (Objects.isNull(userObj)) {
-                        return new ResponseEntity<>(Page.empty(), HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-
-                    Page<AnimalWrapper> animals = animalDAO.getAllAnimalsByOwnerId(userObj.getId(), pageable);
-
-                    return new ResponseEntity<>(animals, HttpStatus.OK);
+    public ResponseEntity<Page<AnimalWrapper>> getAllAnimals(Pageable pageable, String name) {
+        try {
+            if (jwtFilter.isAdminOrUser()) {
+                User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
+                if (Objects.isNull(userObj)) {
+                    return new ResponseEntity<>(Page.empty(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
 
-            return new ResponseEntity<>(Page.empty(), HttpStatus.BAD_REQUEST);
+                Page<AnimalWrapper> animals;
+                if (name != null) {
+                    String nameParameter = "%"+name+"%";
+                    animals = animalDAO.getAllAnimalsByOwnerIdAndNameLike(userObj.getId(), nameParameter, pageable);
+                } else {
+                    animals = animalDAO.getAllAnimalsByOwnerId(userObj.getId(), pageable);
+                }
+
+                return new ResponseEntity<>(animals, HttpStatus.OK);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
+        return new ResponseEntity<>(Page.empty(), HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<AnimalWrapper> findAnimalById(String id) {
