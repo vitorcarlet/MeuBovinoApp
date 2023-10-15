@@ -19,6 +19,7 @@ import java.util.Date;
 
 
 @NamedQuery(name = "Animal.getAllAnimal", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight,u.ownerId) from Animal u where u.ownerId.id = :ownerId")
+@NamedQuery(name = "Animal.getAllAnimalsByOwnerIdAndNameLike", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight,u.ownerId) from Animal u where u.ownerId.id = :ownerId and u.name like :name")
 @NamedQuery(name = "Animal.getAllAnimalsByOwnerId", query = "select new com.meubovinoapp.wrapper.AnimalWrapper(u.id,u.name, u.race,u.birth,u.actualWeight,u.ownerId) from Animal u where u.ownerId.id = :ownerId")
 @NamedQuery(name = "Animal.findById", query = "select new com.meubovinoapp.POJO.Animal(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.id=:id")
 @NamedQuery(name = "Animal.findAnimalByName", query = "select new com.meubovinoapp.POJO.Animal(u.id,u.name, u.race,u.birth,u.actualWeight) from Animal u where u.name=:name and u.ownerId.id = :ownerId")
