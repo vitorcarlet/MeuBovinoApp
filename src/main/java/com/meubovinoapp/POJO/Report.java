@@ -14,6 +14,10 @@ import java.util.Date;
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "report")
+
+@NamedQuery(name = "Report.getAllReports", query = "select r from Report r order by r.id desc")
+@NamedQuery(name = "Report.getReportByUserName", query = "select r from Report r where r.createdBy=:username order by r.id desc")
+
 public class Report implements Serializable {
 
     private static final long serialVersionUID=1L;

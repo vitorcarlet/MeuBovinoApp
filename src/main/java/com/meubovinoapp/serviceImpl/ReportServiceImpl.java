@@ -170,18 +170,58 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public ResponseEntity<List<Report>> getReport() {
-        return null;
+
+        List<Report> list = new ArrayList<>();
+        if (jwtFilter.isAdmin()) {
+            list = reportDAO.getAllReports();
+        } else {
+            list = reportDAO.getReportByUserName(jwtFilter.getCurrentUser());
+
+
+        }
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<byte[]> getPdf(Map<String, Object> requestMap) {
+        log.info("Inside getPdf : requestMap {}", requestMap);
+        try {
+            byte[] byteArray = new byte[0];
+            if (!requestMap.containsKey("uuid") && validateRequestMap(requestMap)) {
+                return new ResponseEntity<>(byteArray, HttpStatus.BAD_REQUEST);
+            }
+            String filePath = BovinoConstants.STORE_LOCATION + "\\" + (String) requestMap.get("uuid") + ".pdf";
+            if (BovinoUtils.isFileExist(filePath)) {
+                byteArray = getByteArray(filePath);
+                return new ResponseEntity<>(byteArray, HttpStatus.OK);
+            } else {
+                requestMap.put("isGenerate", false);
+                generateReport(requestMap);
+                byteArray = getByteArray(filePath);
+                return new ResponseEntity<>(byteArray, HttpStatus.OK);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return null;
     }
 
     @Override
     public ResponseEntity<String> deleteReport(Integer id) {
-        return null;
+        try{
+            Optional optional = reportDAO.findById(Long.valueOf(id));
+            if(!optional.isEmpty()){
+                reportDAO.deleteById(Long.valueOf(id));
+                return BovinoUtils.getResponseEntity("Report Deleted succesfully",HttpStatus.OK);
+            }
+            return BovinoUtils.getResponseEntity("Report id does not exist",HttpStatus.OK);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return BovinoUtils.getResponseEntity(BovinoConstants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
     private void insertBill(Map<String, Object> requestMap) {
         try {
