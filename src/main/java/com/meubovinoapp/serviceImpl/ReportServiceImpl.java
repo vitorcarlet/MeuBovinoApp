@@ -210,9 +210,9 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ResponseEntity<String> deleteReport(Integer id) {
         try{
-            Optional optional = reportDAO.findById(Long.valueOf(id));
+            Optional optional = reportDAO.findById(id);
             if(!optional.isEmpty()){
-                reportDAO.deleteById(Long.valueOf(id));
+                reportDAO.deleteById(id);
                 return BovinoUtils.getResponseEntity("Report Deleted succesfully",HttpStatus.OK);
             }
             return BovinoUtils.getResponseEntity("Report id does not exist",HttpStatus.OK);
@@ -228,10 +228,15 @@ public class ReportServiceImpl implements ReportService {
             Report report = new Report();
             report.setUuid((String) requestMap.get("uuid"));
             report.setPaymentMethod((String) requestMap.get("paymentMethod"));
-            report.setTotal(Integer.parseInt((String) requestMap.get("totalAmount")));
+            report.setTotal((int) Double.parseDouble((String) requestMap.get("totalAmount")));
             report.setCreatedBy(jwtFilter.getCurrentUser());
+            log.info("inside insert Bill");
             reportDAO.save(report);
-        } catch (Exception ex) {
+        }catch (NumberFormatException ex) {
+            // Handle the exception appropriately, e.g., log the error or inform the user
+            ex.printStackTrace();
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
         }
     }

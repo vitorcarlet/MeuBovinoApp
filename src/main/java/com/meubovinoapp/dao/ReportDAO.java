@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ReportDAO extends JpaRepository<Report,Long> {
+public interface ReportDAO extends JpaRepository<Report,Integer> {
 
     List<Report> getAllReports();
 
