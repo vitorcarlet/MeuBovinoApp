@@ -51,10 +51,14 @@ public class MonthlyServiceImpl implements MonthlyService {
         String selectQuery = "SELECT m.mes, COALESCE(ROUND(AVG(e.weight), 0), 0) AS mediaPeso " +
                 "FROM user_temp_table_" + userObj.getId()  + " m " +
                 "LEFT JOIN evolution e ON DATE_FORMAT(e.registry_date, '%Y-%m') = m.mes " +
+                "LEFT JOIN animals a ON e.animal_id_fk = a.id " +
+                "WHERE a.ox_id_fk = :userId " + // Adicionando um espaço antes da cláusula WHERE
                 "GROUP BY m.mes " +
                 "ORDER BY m.mes DESC";
 
-        List<Object[]> result = entityManager.createNativeQuery(selectQuery).getResultList();
+        List<Object[]> result = entityManager.createNativeQuery(selectQuery)
+                .setParameter("userId", userObj.getId())
+                .getResultList();
 
         // Mapeamento dos resultados para a classe MonthlyData
         List<MonthlyData> monthlyDataList = new ArrayList<>();

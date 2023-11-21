@@ -2,8 +2,10 @@ package com.meubovinoapp.serviceImpl;
 
 import com.meubovinoapp.JWT.JwtFilter;
 import com.meubovinoapp.POJO.Report;
+import com.meubovinoapp.POJO.User;
 import com.meubovinoapp.constants.BovinoConstants;
 import com.meubovinoapp.dao.ReportDAO;
+import com.meubovinoapp.dao.UserDAO;
 import com.meubovinoapp.service.ReportService;
 import com.meubovinoapp.utils.BovinoUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,9 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     ReportDAO reportDAO;
 
+    @Autowired
+    UserDAO userDAO;
+
     @Override
     public ResponseEntity<String> generateReport(Map<String, Object> requestMap) {
         try {
@@ -62,7 +67,10 @@ public class ReportServiceImpl implements ReportService {
                     insertBill(requestMap);
                 }
 
-                String data = "Name: " + requestMap.get("name") + "\n" + "Quantidade de Bois " + requestMap.get("oxQuantity") +
+                String username = jwtFilter.getCurrentUser();
+                User actualUser = userDAO.findByEmail(username);
+
+                String data = "Name: " + actualUser.getName() + "\n" + "Quantidade de Bois " + requestMap.get("oxQuantity") +
                         "\n" + "Média de peso dos bois: " + requestMap.get("oxAverageWeight") + "\n";
 
                 Document document = new Document();
